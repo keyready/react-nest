@@ -3,6 +3,7 @@ import { InputGroup, Form, Button } from 'react-bootstrap';
 import { FormEvent, useEffect, useState } from 'react';
 import { Card } from 'shared/UI/Card/Card';
 import { HStack } from 'shared/UI/Stack';
+import classes from './MainPage.module.scss';
 
 interface IProduct {
     name?: string;
@@ -80,6 +81,7 @@ const MainPage = () => {
                         name="image"
                         id="image"
                         type="file"
+                        accept=".png,.jpg,.jpeg"
                     />
                 </Form.Group>
                 <Button type="submit">Отправить</Button>
@@ -122,6 +124,7 @@ const MainPage = () => {
                         name="image"
                         id="image"
                         type="file"
+                        accept=".png,.jpg,.jpeg"
                     />
                 </Form.Group>
                 <Button type="submit">Отправить</Button>
@@ -136,7 +139,7 @@ const MainPage = () => {
                 <Card>
                     <HStack max>
                         <h2>{product.name}</h2>
-                        <img src={product.image} alt="" />
+                        <img className={classes.image} src={product.image} alt="" />
                     </HStack>
                     <p>{product.description}</p>
                     <p>
