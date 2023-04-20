@@ -126,7 +126,7 @@ const MainPage = () => {
 
             <h1>список всех продуктов</h1>
             <VStack max align="start" gap="16" className={classes.productList}>
-                {products
+                {products && !isLoading
                     ? products.map((product) => (
                         <ProductCard
                             product={product}

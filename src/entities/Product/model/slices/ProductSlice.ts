@@ -1,18 +1,14 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { ProductSchema } from '../types/ProductSchema';
 
 const initialState: ProductSchema = {
-    
+    isLoading: false,
 };
 
 export const ProductSlice = createSlice({
     name: 'Product',
     initialState,
-    reducers: {
-        template: (state, action: PayloadAction<string>) => {
-           
-        },
-    },
+    reducers: {},
     // extraReducers: (builder) => {
     //     builder
     //         .addCase(, (state) => {
