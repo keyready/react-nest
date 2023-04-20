@@ -15,28 +15,30 @@ export const ProductCard = memo((props: ProductProps) => {
     return (
         <div className={classNames(classes.ProductCard, {}, [className])}>
             <VStack max justify="start" align="center">
-                <HStack max justify="between" align="center">
+                <HStack max gap="32">
                     <img
                         className={classes.image}
                         src={product.image}
                         alt={product.name}
                     />
-                    <h2
-                        className={classes.productTitle}
-                    >
-                        {product.name}
-                    </h2>
+                    <VStack max>
+                        <h2
+                            className={classes.productTitle}
+                        >
+                            {product.name}
+                        </h2>
+                        <p
+                            className={classes.price}
+                        >
+                            Стоимость:
+                            {product.price}
+                        </p>
+                    </VStack>
                 </HStack>
                 <p
                     className={classes.description}
                 >
                     {product.description}
-                </p>
-                <p
-                    className={classes.price}
-                >
-                    Стоимость:
-                    {product.price}
                 </p>
             </VStack>
         </div>

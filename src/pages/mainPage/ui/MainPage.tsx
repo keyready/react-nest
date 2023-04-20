@@ -128,7 +128,6 @@ const MainPage = () => {
             <VStack max align="start" gap="16" className={classes.productList}>
                 {products
                     ? products.map((product) => (
-                        // {new Array(5).fill(0).map((product) => (
                         <ProductCard
                             product={product}
                         />
