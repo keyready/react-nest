@@ -1,83 +1,37 @@
 import { Page } from 'widgets/Page/Page';
-import {
-    InputGroup, Form, Button, Col,
-} from 'react-bootstrap';
-import {
-    FormEvent, useCallback, useEffect, useState,
-} from 'react';
-import { Card } from 'shared/UI/Card/Card';
-import { HStack, VStack } from 'shared/UI/Stack';
+import { Button, Form, InputGroup } from 'react-bootstrap';
+import { FormEvent, useCallback } from 'react';
+import { VStack } from 'shared/UI/Stack';
 import { createProduct, ProductCard } from 'entities/Product';
-import { useGetProducts } from 'pages/mainPage/api/productsApi';
 import { Loader } from 'shared/UI/Loader';
 import { useAppDispatch } from 'shared/lib/hooks/useAppDispatch/useAppDispatch';
+import { registerUser } from 'entities/User';
+import { useGetProducts } from '../api/productsApi';
 import classes from './MainPage.module.scss';
-
-interface IProduct {
-    name?: string;
-    price?: number;
-    description?: string;
-    image?: string
-}
 
 const MainPage = () => {
     const { data: products, isLoading } = useGetProducts(1);
     const dispatch = useAppDispatch();
 
-    const handleSubmitUser = (event: FormEvent<HTMLFormElement>) => {
+    const handleSubmitUser = useCallback(async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
+        event.currentTarget.reset();
 
-        fetch('http://localhost:1337/register', {
-            method: 'POST',
-            body: formData,
-        });
-    };
+        const result = await dispatch(registerUser(formData));
+        // @ts-ignore
+        if (result.meta.requestStatus === 'fulfilled') {
+            alert('Регистрация успешна');
+        } else alert('Какая-то ошибка');
+    }, [dispatch]);
     const handleSubmitProduct = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         dispatch(createProduct(formData));
     };
-    const handleSubmitLogin = useCallback((event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const formData = new FormData(event.currentTarget);
-
-        fetch('http://localhost:1337/login', {
-            method: 'POST',
-            body: formData,
-        })
-            .then((res) => res.json())
-            .then((res) => alert(res));
-    }, []);
 
     return (
         <Page>
-            <h1>Авторизация</h1>
-            <Form
-                encType="multipart/form-data"
-                onSubmit={handleSubmitLogin}
-            >
-                <InputGroup className="mb-3">
-                    <InputGroup.Text>Логин</InputGroup.Text>
-                    <Form.Control
-                        name="login"
-                        placeholder="Логин"
-                    />
-                </InputGroup>
-                <InputGroup className="mb-3">
-                    <InputGroup.Text>Пароль</InputGroup.Text>
-                    <Form.Control
-                        name="password"
-                        placeholder="Пароль"
-                    />
-                </InputGroup>
-                <Button type="submit">Войти</Button>
-            </Form>
-            <hr />
-            <br />
-            <br />
-            <br />
-
             <h1>добавить пользователя</h1>
             <Form
                 encType="multipart/form-data"
@@ -176,12 +130,7 @@ const MainPage = () => {
                     ? products.map((product) => (
                         // {new Array(5).fill(0).map((product) => (
                         <ProductCard
-                            product={{
-                                name: 'Название',
-                                description: 'Описание продукта',
-                                price: 1000,
-                                image: 'file_path',
-                            }}
+                            product={product}
                         />
                     ))
                     : 'Продуктов пока нет'}

@@ -70,7 +70,7 @@ const LoginForm = memo((props: LoginFormProps) => {
                 )}
                 <Form.Control
                     autoFocus
-                    placeholder="Введите имя"
+                    placeholder="Введите логин"
                     value={username}
                     onChange={onUsernameChange}
                     type="text"
