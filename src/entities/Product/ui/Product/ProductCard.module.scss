@@ -1,0 +1,29 @@
+.ProductCard {
+	width: 100%;
+	padding: 20px;
+	border: 2px solid teal;
+	background: rgba(41, 153, 173, 0.45);
+}
+
+.name {
+	margin: 0;
+}
+
+.description {
+	margin: 0;
+}
+
+.price {
+	margin: 0;
+
+	&:after {
+		content: ' P';
+	}
+}
+
+.image {
+	width: 150px;
+	height: 150px;
+	border-radius: 20%;
+}
+

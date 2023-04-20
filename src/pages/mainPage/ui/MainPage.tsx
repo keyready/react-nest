@@ -1,8 +1,16 @@
 import { Page } from 'widgets/Page/Page';
-import { InputGroup, Form, Button } from 'react-bootstrap';
-import { FormEvent, useEffect, useState } from 'react';
+import {
+    InputGroup, Form, Button, Col,
+} from 'react-bootstrap';
+import {
+    FormEvent, useCallback, useEffect, useState,
+} from 'react';
 import { Card } from 'shared/UI/Card/Card';
-import { HStack } from 'shared/UI/Stack';
+import { HStack, VStack } from 'shared/UI/Stack';
+import { createProduct, ProductCard } from 'entities/Product';
+import { useGetProducts } from 'pages/mainPage/api/productsApi';
+import { Loader } from 'shared/UI/Loader';
+import { useAppDispatch } from 'shared/lib/hooks/useAppDispatch/useAppDispatch';
 import classes from './MainPage.module.scss';
 
 interface IProduct {
@@ -13,13 +21,8 @@ interface IProduct {
 }
 
 const MainPage = () => {
-    const [products, setProducts] = useState<IProduct[]>([]);
-
-    useEffect(() => {
-        fetch('http://localhost:1337/products')
-            .then((res) => res.json())
-            .then((res) => setProducts(res));
-    }, [products]);
+    const { data: products, isLoading } = useGetProducts(1);
+    const dispatch = useAppDispatch();
 
     const handleSubmitUser = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -33,15 +36,48 @@ const MainPage = () => {
     const handleSubmitProduct = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
+        dispatch(createProduct(formData));
+    };
+    const handleSubmitLogin = useCallback((event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
 
-        fetch('http://localhost:1337/create_product', {
+        fetch('http://localhost:1337/login', {
             method: 'POST',
             body: formData,
-        });
-    };
+        })
+            .then((res) => res.json())
+            .then((res) => alert(res));
+    }, []);
 
     return (
         <Page>
+            <h1>Авторизация</h1>
+            <Form
+                encType="multipart/form-data"
+                onSubmit={handleSubmitLogin}
+            >
+                <InputGroup className="mb-3">
+                    <InputGroup.Text>Логин</InputGroup.Text>
+                    <Form.Control
+                        name="login"
+                        placeholder="Логин"
+                    />
+                </InputGroup>
+                <InputGroup className="mb-3">
+                    <InputGroup.Text>Пароль</InputGroup.Text>
+                    <Form.Control
+                        name="password"
+                        placeholder="Пароль"
+                    />
+                </InputGroup>
+                <Button type="submit">Войти</Button>
+            </Form>
+            <hr />
+            <br />
+            <br />
+            <br />
+
             <h1>добавить пользователя</h1>
             <Form
                 encType="multipart/form-data"
@@ -134,20 +170,25 @@ const MainPage = () => {
             <br />
             <br />
 
-            <h1>Список всех продуктов</h1>
-            {products.map((product) => (
-                <Card>
-                    <HStack max>
-                        <h2>{product.name}</h2>
-                        <img className={classes.image} src={product.image} alt="" />
-                    </HStack>
-                    <p>{product.description}</p>
-                    <p>
-                        Стоимость:
-                        {product.price}
-                    </p>
-                </Card>
-            ))}
+            <h1>список всех продуктов</h1>
+            <VStack max align="start" gap="16" className={classes.productList}>
+                {products
+                    ? products.map((product) => (
+                        // {new Array(5).fill(0).map((product) => (
+                        <ProductCard
+                            product={{
+                                name: 'Название',
+                                description: 'Описание продукта',
+                                price: 1000,
+                                image: 'file_path',
+                            }}
+                        />
+                    ))
+                    : 'Продуктов пока нет'}
+                {isLoading && (
+                    <Loader />
+                )}
+            </VStack>
         </Page>
     );
 };
