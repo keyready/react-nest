@@ -7,6 +7,8 @@ import {
 import { AxiosInstance } from 'axios';
 import { UISchema } from 'features/UI';
 import { rtkApi } from 'shared/api/rtkApi';
+import { ProductSchema } from 'entities/Product';
+import { MainPageSchema } from 'pages/mainPage';
 
 export interface StateSchema {
     counter: CounterSchema;
@@ -16,6 +18,8 @@ export interface StateSchema {
 
     // asynchronous reducers
     loginForm?: LoginSchema;
+    product?: ProductSchema;
+    mainPage?: MainPageSchema
 }
 
 export type StateSchemaKey = keyof StateSchema;

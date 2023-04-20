@@ -1,8 +1,15 @@
 .ProductCard {
+	position: relative;
 	width: 100%;
 	padding: 20px;
 	border: 2px solid teal;
 	background: rgba(41, 153, 173, 0.45);
+}
+
+.editBtn {
+	position: absolute;
+	right: 5px;
+	top: 5px;
 }
 
 .name {
