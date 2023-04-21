@@ -124,7 +124,6 @@ export const ProductCard = memo((props: ProductProps) => {
                             plaintext={readonly}
                             readOnly={readonly}
                             onChange={onChangeTitleHandler}
-                            defaultValue={form.name}
                             value={form.name}
                             name="name"
                         />
@@ -135,7 +134,6 @@ export const ProductCard = memo((props: ProductProps) => {
                                 plaintext={readonly}
                                 readOnly={readonly}
                                 onChange={onChangePriceHandler}
-                                defaultValue={form.price}
                                 value={form.price}
                                 type="number"
                                 name="price"
@@ -151,7 +149,6 @@ export const ProductCard = memo((props: ProductProps) => {
                     plaintext={readonly}
                     readOnly={readonly}
                     onChange={onChangeDescriptionHandler}
-                    defaultValue={form.description}
                     value={form.description}
                     name="description"
                 />

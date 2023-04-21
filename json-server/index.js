@@ -14,11 +14,11 @@ server.use(jsonServer.bodyParser);
 // Эндпоинт для логина
 server.post('/login', (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { login, password } = req.body;
         const { db } = router;
 
         const userFromBd = db.get('users').find(
-            { username, password },
+            { username: login, password },
         ).value();
 
         if (userFromBd) {
@@ -41,8 +41,6 @@ server.use((req, res, next) => {
         .find({ access_token: req.headers.authorization.split(' ')[1] })
         .value();
 
-    console.log(token);
-
     if (!token) {
         return res.status(401).json({ message: 'Not auth' });
     }
@@ -57,7 +55,6 @@ server.use((req, res, next) => {
 server.post('/update_product/:id', (req, res) => {
     const { db } = router;
     const { name, description, price } = req.body;
-    console.log(name, description, price);
     const { id } = req.params;
 
     const product = db.get('products').find({ id: Number(id) }).value();
@@ -72,6 +69,32 @@ server.post('/update_product/:id', (req, res) => {
 
     const products = db.get('products').value();
     res.json(products);
+});
+
+server.post('/register', (req, res) => {
+    const {
+        firstname, lastname, login, password,
+    } = req.body;
+
+    const { db } = router;
+    const id = db.get('products').size().value() + 1;
+
+    if (!firstname || !lastname || !login || !password) {
+        return res.status(418).json({ message: 'Нет данных' });
+    }
+
+    const newUser = {
+        id, firstname, lastname, login, password,
+    };
+
+    db.get('users')
+        .push(newUser)
+        .write();
+
+    const users = db.get('users').value();
+    console.log(users);
+
+    return res.json({ message: 'Зарегистрировался' });
 });
 
 server.post('/refresh', (req, res) => {
