@@ -1,6 +1,6 @@
-import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { StateSchema } from 'app/providers/StoreProvider';
-import { Product } from 'entities/Product';
+import { Product, updateProduct } from 'entities/Product';
 import { fetchProducts } from '../services/fetchProducts';
 import { MainPageSchema } from '../types/MainPage';
 
@@ -36,6 +36,19 @@ const MainPageSlice = createSlice({
                 productAdapter.setAll(state, action.payload);
             })
             .addCase(fetchProducts.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            })
+
+            .addCase(updateProduct.pending, (state) => {
+                state.error = undefined;
+                state.isLoading = true;
+            })
+            .addCase(updateProduct.fulfilled, (state, action: PayloadAction<Product[]>) => {
+                state.isLoading = false;
+                productAdapter.setAll(state, action.payload);
+            })
+            .addCase(updateProduct.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload;
             });

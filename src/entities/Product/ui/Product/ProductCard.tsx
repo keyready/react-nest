@@ -1,6 +1,6 @@
 import { classNames } from 'shared/lib/classNames/classNames';
 import {
-    ChangeEvent, memo, useCallback, useState,
+    ChangeEvent, FormEvent, memo, useCallback, useEffect, useRef, useState,
 } from 'react';
 import { HStack, VStack } from 'shared/UI/Stack';
 import { Form } from 'react-bootstrap';
@@ -19,6 +19,7 @@ export const ProductCard = memo((props: ProductProps) => {
     const { className, product } = props;
 
     const dispatch = useAppDispatch();
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const [readonly, setReadonly] = useState<boolean>(true);
     const [form, setForm] = useState<Product>(product);
@@ -32,14 +33,18 @@ export const ProductCard = memo((props: ProductProps) => {
         setForm(product);
     }, [product]);
 
-    const saveChangesHandler = useCallback(async () => {
-        const result = await dispatch(updateProduct(form));
+    const saveChangesHandler = useCallback(async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.currentTarget);
+
+        const result = await dispatch(updateProduct({ form: formData, id: form.id }));
         setReadonly(true);
 
         if (result.meta.requestStatus === 'fulfilled') {
-            alert(`Данные продукта с id = ${form.id} успешно обновлены`);
+            //
         } else {
-            alert(`Ошибка при обновлении продукта с id = ${form.id}`);
+            alert(`Ошибка при обновлении продукта с id = ${product.id}`);
         }
         setForm(product);
     }, [dispatch, form, product]);
@@ -48,21 +53,27 @@ export const ProductCard = memo((props: ProductProps) => {
         setForm({ ...form, name: e.target.value });
     }, [form]);
     const onChangeDescriptionHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+        const { current: textArea } = textareaRef;
+        if (textArea) {
+            textArea.style.height = 'auto';
+            textArea.style.height = `${textArea.scrollHeight}px`;
+        }
+
         setForm({ ...form, description: e.target.value });
     }, [form]);
     const onChangePriceHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        // eslint-disable-next-line no-bitwise
         setForm({ ...form, price: ~~e.target.value });
     }, [form]);
 
     return (
         <Form
             className={classNames(classes.ProductCard, {}, [className])}
+            onSubmit={saveChangesHandler}
+            encType="multipart/form-data"
         >
             <ProductCardHeader
                 readonlyHandler={readonlyHandler}
                 cancelChangesHandler={cancelChangesHandler}
-                saveChangesHandler={saveChangesHandler}
                 readonly={readonly}
             />
             <VStack
@@ -71,11 +82,26 @@ export const ProductCard = memo((props: ProductProps) => {
                 align="center"
             >
                 <HStack max gap="32">
-                    <img
-                        className={classes.image}
-                        src={form.image}
-                        alt={form.name}
-                    />
+                    <div>
+                        <label
+                            htmlFor="imageInput"
+                            style={{ pointerEvents: readonly ? 'none' : 'auto' }}
+                        >
+                            <img
+                                className={classes.image}
+                                src={form.image}
+                                alt={form.name}
+                            />
+                        </label>
+                        <input
+                            readOnly={readonly}
+                            name="image"
+                            id="imageInput"
+                            type="file"
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                        />
+                    </div>
                     <VStack max>
                         <Form.Control
                             className={classes.productTitle}
@@ -84,6 +110,7 @@ export const ProductCard = memo((props: ProductProps) => {
                             onChange={onChangeTitleHandler}
                             defaultValue={form.name}
                             value={form.name}
+                            name="name"
                         />
                         <HStack max align="center">
                             <div className={classes.productDescription}>Стоимость: </div>
@@ -95,17 +122,22 @@ export const ProductCard = memo((props: ProductProps) => {
                                 defaultValue={form.price}
                                 value={form.price}
                                 type="number"
+                                name="price"
                             />
                         </HStack>
                     </VStack>
                 </HStack>
                 <Form.Control
+                    as="textarea"
+                    style={{ resize: 'none', height: 'auto' }}
+                    ref={textareaRef}
                     className={classes.productDescription}
                     plaintext={readonly}
                     readOnly={readonly}
                     onChange={onChangeDescriptionHandler}
                     defaultValue={form.description}
                     value={form.description}
+                    name="description"
                 />
             </VStack>
         </Form>

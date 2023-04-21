@@ -1,6 +1,8 @@
 import { Page } from 'widgets/Page/Page';
 import { Button, Form, InputGroup } from 'react-bootstrap';
-import { FormEvent, useCallback, useEffect } from 'react';
+import {
+    ChangeEvent, FormEvent, useCallback, useEffect, useState,
+} from 'react';
 import { VStack } from 'shared/UI/Stack';
 import {
     createProduct,
@@ -51,6 +53,15 @@ const MainPage = () => {
         const formData = new FormData(event.currentTarget);
         dispatch(createProduct(formData));
     };
+
+    const [imageUrl, setImageUrl] = useState('');
+
+    function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
+        if (!event.target.files) return;
+        const file = event.target.files[0];
+        const imageUrl = URL.createObjectURL(file);
+        setImageUrl(imageUrl);
+    }
 
     return (
         <DynamicModuleLoader reducers={reducers}>

@@ -38,6 +38,7 @@ export const routerConfig: Record<AppRoutes, AppRoutesProps> = {
     },
     [AppRoutes.ABOUT]: {
         path: RoutePath.about,
+        authOnly: true,
         element: <AboutPage />,
     },
     [AppRoutes.ADMIN_PANEL]: {

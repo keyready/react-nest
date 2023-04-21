@@ -1,5 +1,6 @@
 const fs = require('fs');
 const jsonServer = require('json-server');
+const express = require('express');
 const path = require('path');
 
 const server = jsonServer.create();
@@ -8,14 +9,7 @@ const router = jsonServer.router(path.resolve(__dirname, 'db.json'));
 
 server.use(jsonServer.defaults({}));
 server.use(jsonServer.bodyParser);
-
-// Нужно для небольшой задержки, чтобы запрос проходил не мгновенно, имитация реального апи
-// server.use(async (req, res, next) => {
-//     await new Promise((res) => {
-//         setTimeout(res, 200);
-//     });
-//     next();
-// });
+server.use(express.json());
 
 // Эндпоинт для логина
 server.post('/login', (req, res) => {
@@ -24,9 +18,9 @@ server.post('/login', (req, res) => {
         const { db } = router;
         const { users = [] } = db;
 
-        const userFromBd = users.find(
-            (user) => user.username === username && user.password === password,
-        );
+        const userFromBd = db.get('users').find(
+            { username, password },
+        ).value();
 
         if (userFromBd) {
             return res.json(userFromBd);
@@ -39,14 +33,33 @@ server.post('/login', (req, res) => {
 });
 
 server.post('/update_product/:id', (req, res) => {
-    res.json({ message: 'все гуд' });
+    const { db } = router;
+    const { name, description, price } = req.body;
+    console.log(name, description, price);
+    const { id } = req.params;
+
+    const product = db.get('products').find({ id: Number(id) }).value();
+
+    const updatedProduct = {
+        ...product,
+        name: name || product.name,
+        description: description || product.description,
+        price: price || product.price,
+    };
+    db.get('products').find({ id: Number(id) }).assign(updatedProduct).write();
+
+    const products = db.get('products').value();
+    res.json(products);
 });
 
 server.post('/create_product', (req, res) => {
-    console.log(req.body);
-    const { name, description, price } = req.body;
     const { db } = router;
+    const { name, description, price } = req.body;
     const id = db.get('products').size().value() + 1;
+
+    if (!name || !description || !price) {
+        return res.status(404).json({ message: 'Нет данных' });
+    }
 
     const newProduct = {
         id, name, description, price,
@@ -54,16 +67,10 @@ server.post('/create_product', (req, res) => {
 
     db.get('products')
         .push(newProduct)
-        .write((err) => {
-            console.log('создали');
-            if (err) {
-                console.error(err);
-                res.json({ error: err });
-            } else {
-                console.log('New user added to the database');
-                res.json({ message: 'New user added to the database' });
-            }
-        });
+        .write();
+
+    const products = db.get('products').value();
+    return res.json(products);
 });
 
 // проверяем, авторизован ли пользователь
