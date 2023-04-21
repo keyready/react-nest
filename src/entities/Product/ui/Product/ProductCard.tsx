@@ -3,11 +3,12 @@ import {
     ChangeEvent, memo, useCallback, useState,
 } from 'react';
 import { HStack, VStack } from 'shared/UI/Stack';
-import { Button, Form, InputGroup } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { useAppDispatch } from 'shared/lib/hooks/useAppDispatch/useAppDispatch';
 import { updateProduct } from '../../model/services/updateProduct';
 import { Product } from '../../model/types/ProductSchema';
 import classes from './ProductCard.module.scss';
+import { ProductCardHeader } from './ProductCardHeader/ProductCardHeader';
 
 interface ProductProps {
     className?: string;
@@ -57,38 +58,13 @@ export const ProductCard = memo((props: ProductProps) => {
     return (
         <Form
             className={classNames(classes.ProductCard, {}, [className])}
-            // onSubmit={saveChangesHandler}
         >
-            {readonly
-                ? (
-                    <HStack max justify="end">
-                        <Button
-                            variant="warning"
-                            onClick={readonlyHandler}
-                            type="button"
-                        >
-                            Редактировать
-                        </Button>
-                    </HStack>
-                )
-                : (
-                    <HStack max justify="end">
-                        <Button
-                            variant="success"
-                            type="button"
-                            onClick={saveChangesHandler}
-                        >
-                            Сохранить
-                        </Button>
-                        <Button
-                            variant="danger"
-                            onClick={cancelChangesHandler}
-                            type="button"
-                        >
-                            Отставить
-                        </Button>
-                    </HStack>
-                )}
+            <ProductCardHeader
+                readonlyHandler={readonlyHandler}
+                cancelChangesHandler={cancelChangesHandler}
+                saveChangesHandler={saveChangesHandler}
+                readonly={readonly}
+            />
             <VStack
                 max
                 justify="start"
