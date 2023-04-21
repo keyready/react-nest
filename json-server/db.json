@@ -37,7 +37,9 @@
       "roles": [
         "USER",
         "ADMIN"
-      ]
+      ],
+      "access_token": "09i4bf8g012qlqeti3y57f",
+      "refresh_token": "dszf90gps2y7of6sep3r"
     }
   ]
 }

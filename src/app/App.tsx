@@ -4,17 +4,27 @@ import { AppRouter } from 'app/providers/AppRouter';
 import { Navbar } from 'widgets/Navbar';
 import { Suspense, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUserInited, userActions } from 'entities/User';
+import {
+    getUserAuthData, getUserAuthorized, getUserInited, userActions,
+} from 'entities/User';
+import { checkAuth } from 'entities/User/model/service/checkAuth';
+import { USER_REFRESH_TOKEN } from 'shared/const';
 
 export const App = () => {
     const { theme } = useTheme();
     const dispatch = useDispatch();
     const inited = useSelector(getUserInited);
+    const authorized = useSelector(getUserAuthorized);
 
     // проверить, был ли авторизован пользователь перед закрытием вкладки
     useEffect(() => {
         dispatch(userActions.initAuthData());
-    }, [dispatch]);
+
+        const refreshToken = localStorage.getItem(USER_REFRESH_TOKEN) || '';
+        if (authorized && refreshToken) {
+            dispatch(checkAuth(refreshToken));
+        }
+    }, [dispatch, authorized]);
 
     return (
         <div

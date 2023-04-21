@@ -1,29 +1,27 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { User, userActions } from 'entities/User';
+import { ThunkConfig } from 'app/providers/StoreProvider';
 import { USER_ACCESS_TOKEN, USER_REFRESH_TOKEN } from 'shared/const';
-import { ThunkConfig } from 'app/providers/StoreProvider/config/StateSchema';
+import { userActions } from '../slice/userSlice';
+import { User } from '../types/user';
 
-interface LoginByUsernameProps {
-    username: string;
-    password: string;
-}
-
-export const loginByUsername = createAsyncThunk<
+export const checkAuth = createAsyncThunk<
     User,
-    LoginByUsernameProps,
+    string,
     ThunkConfig<string>
 >(
-    'login/loginByUsername',
-    async (authData, thunkAPI) => {
-        const { extra, dispatch, rejectWithValue } = thunkAPI;
+    'user/checkAuth',
+    async (token, thunkApi) => {
+        const { extra, rejectWithValue, dispatch } = thunkApi;
 
         try {
-            const response = await extra.api.post<User>('/login', authData);
+            const response = await extra.api.post<User>(
+                '/refresh',
+                { refresh_token: token },
+            );
 
             if (!response.data) {
                 throw new Error();
             }
-
             localStorage.setItem(
                 USER_REFRESH_TOKEN,
                 JSON.stringify(response.data.refresh_token),
@@ -36,6 +34,7 @@ export const loginByUsername = createAsyncThunk<
 
             return response.data;
         } catch (e) {
+            console.log(e);
             return rejectWithValue('error');
         }
     },

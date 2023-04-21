@@ -21,6 +21,15 @@ export const ProductCard = memo((props: ProductProps) => {
     const dispatch = useAppDispatch();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+    const [imageUrl, setImageUrl] = useState('');
+
+    function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
+        if (!event.target.files) return;
+        const file = event.target.files[0];
+        const imageUrl = URL.createObjectURL(file);
+        setImageUrl(imageUrl);
+    }
+
     const [readonly, setReadonly] = useState<boolean>(true);
     const [form, setForm] = useState<Product>(product);
 
@@ -31,6 +40,7 @@ export const ProductCard = memo((props: ProductProps) => {
     const cancelChangesHandler = useCallback(() => {
         setReadonly(true);
         setForm(product);
+        setImageUrl('');
     }, [product]);
 
     const saveChangesHandler = useCallback(async (e: FormEvent<HTMLFormElement>) => {
@@ -85,11 +95,16 @@ export const ProductCard = memo((props: ProductProps) => {
                     <div>
                         <label
                             htmlFor="imageInput"
-                            style={{ pointerEvents: readonly ? 'none' : 'auto' }}
+                            style={{
+                                pointerEvents: readonly ? 'none' : 'auto',
+                                cursor: readonly ? 'auto' : 'pointer',
+                            }}
                         >
                             <img
-                                className={classes.image}
-                                src={form.image}
+                                className={classNames(classes.image, {
+                                    [classes.canReplaceImage]: !readonly,
+                                })}
+                                src={imageUrl || form.image}
                                 alt={form.name}
                             />
                         </label>
@@ -99,6 +114,7 @@ export const ProductCard = memo((props: ProductProps) => {
                             id="imageInput"
                             type="file"
                             accept="image/*"
+                            onChange={handleImageChange}
                             style={{ display: 'none' }}
                         />
                     </div>

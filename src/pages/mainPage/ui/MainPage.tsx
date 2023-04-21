@@ -11,7 +11,7 @@ import {
 } from 'entities/Product';
 import { Loader } from 'shared/UI/Loader';
 import { useAppDispatch } from 'shared/lib/hooks/useAppDispatch/useAppDispatch';
-import { registerUser } from 'entities/User';
+import { getUserAuthData, registerUser } from 'entities/User';
 import {
     DynamicModuleLoader,
     ReducersList,
@@ -29,10 +29,11 @@ const reducers: ReducersList = {
 
 const MainPage = () => {
     const dispatch = useAppDispatch();
+    const userData = useSelector(getUserAuthData);
 
     useEffect(() => {
         dispatch(fetchProducts());
-    }, [dispatch]);
+    }, [dispatch, userData]);
 
     const products = useSelector(getProducts.selectAll);
     const isLoading = useSelector(getProductsIsLoading);
@@ -53,15 +54,6 @@ const MainPage = () => {
         const formData = new FormData(event.currentTarget);
         dispatch(createProduct(formData));
     };
-
-    const [imageUrl, setImageUrl] = useState('');
-
-    function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
-        if (!event.target.files) return;
-        const file = event.target.files[0];
-        const imageUrl = URL.createObjectURL(file);
-        setImageUrl(imageUrl);
-    }
 
     return (
         <DynamicModuleLoader reducers={reducers}>
