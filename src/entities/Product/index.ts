@@ -5,8 +5,4 @@ export { createProduct } from './model/services/createProduct';
 export { updateProduct } from './model/services/updateProduct';
 export {
     getProductData,
-    getProductForm,
-    getProductError,
-    getProductIsLoading,
-    getProductReadonly,
 } from './model/selectors/getProductData';

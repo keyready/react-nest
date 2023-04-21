@@ -5,28 +5,12 @@ import { Product, ProductSchema } from '../types/ProductSchema';
 
 const initialState: ProductSchema = {
     isLoading: false,
-    readonly: true,
 };
 
 export const ProductSlice = createSlice({
     name: 'Product',
     initialState,
-    reducers: {
-        setReadonly: (state, action: PayloadAction<boolean>) => {
-            state.readonly = action.payload;
-        },
-        cancelEdit: (state) => {
-            state.readonly = true;
-            state.form = state.data;
-        },
-        changeData: (state, action: PayloadAction<Product>) => {
-            state.form = {
-                ...state.data,
-                ...state.form,
-                ...action.payload,
-            };
-        },
-    },
+    reducers: {},
     extraReducers: (builder) => {
         builder
             .addCase(createProduct.pending, (state) => {

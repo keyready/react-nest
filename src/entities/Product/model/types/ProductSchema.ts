@@ -8,8 +8,6 @@ export interface Product {
 
 export interface ProductSchema {
     data?: Product;
-    form?: Product;
-    readonly?: boolean;
     isLoading: boolean;
     error?: string
 }

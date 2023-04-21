@@ -1,21 +1,22 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'app/providers/StoreProvider';
-import { getProductForm } from '../selectors/getProductData';
+import { getProductData } from '../selectors/getProductData';
+import { Product } from '../types/ProductSchema';
 
 export const updateProduct = createAsyncThunk<
-    string,
-    void,
+    Product[],
+    Product,
     ThunkConfig<string>
 >(
     'products/updateProduct',
-    async (_, thunkApi) => {
+    async (form, thunkApi) => {
         const { extra, rejectWithValue, getState } = thunkApi;
 
-        const form = getProductForm(getState());
+        const product = getProductData(getState());
 
         try {
-            const response = await extra.api.post<string>(
-                `/edit_product/${form?.id}`,
+            const response = await extra.api.post<Product[]>(
+                `/update_product/${product?.id}`,
                 form,
             );
 

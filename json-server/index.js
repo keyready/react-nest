@@ -38,6 +38,10 @@ server.post('/login', (req, res) => {
     }
 });
 
+server.post('/update_product/:id', (req, res) => {
+    res.json({ message: 'все гуд' });
+});
+
 server.post('/create_product', (req, res) => {
     console.log(req.body);
     const { name, description, price } = req.body;

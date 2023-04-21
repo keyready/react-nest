@@ -1,22 +1,14 @@
 import { classNames } from 'shared/lib/classNames/classNames';
 import {
-    ChangeEvent, memo, useCallback, useState,
+    ChangeEvent, FormEvent, memo, useCallback, useState,
 } from 'react';
 import { HStack, VStack } from 'shared/UI/Stack';
 import { Button, Form } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
 import { useAppDispatch } from 'shared/lib/hooks/useAppDispatch/useAppDispatch';
-import { ProductActions } from '../../model/slices/ProductSlice';
+import { Subscribers } from '@reduxjs/toolkit/dist/query/core/apiState';
 import { updateProduct } from '../../model/services/updateProduct';
-import {
-    getProductData,
-    getProductError,
-    getProductForm,
-    getProductIsLoading,
-    getProductReadonly,
-} from '../../model/selectors/getProductData';
-import classes from './ProductCard.module.scss';
 import { Product } from '../../model/types/ProductSchema';
+import classes from './ProductCard.module.scss';
 
 interface ProductProps {
     className?: string;
@@ -28,40 +20,53 @@ export const ProductCard = memo((props: ProductProps) => {
 
     const dispatch = useAppDispatch();
 
-    const readonly = useSelector(getProductReadonly);
-    const data = useSelector(getProductData);
-    const form = useSelector(getProductForm);
-    const error = useSelector(getProductError);
-    const isLoading = useSelector(getProductIsLoading);
+    const [readonly, setReadonly] = useState<boolean>(true);
+    const [form, setForm] = useState<Product>(product);
 
     const readonlyHandler = useCallback(() => {
-        dispatch(ProductActions.setReadonly(false));
-    }, [dispatch]);
+        setReadonly(false);
+    }, []);
 
     const cancelChangesHandler = useCallback(() => {
-        dispatch(ProductActions.cancelEdit());
-    }, [dispatch]);
+        setReadonly(true);
+        setForm(product);
+    }, [product]);
 
-    const saveChangesHandler = useCallback(() => {
-        dispatch(updateProduct());
-    }, [dispatch]);
+    const saveChangesHandler = useCallback(async () => {
+        const result = await dispatch(updateProduct(form));
+        setReadonly(true);
+
+        if (result.meta.requestStatus === 'fulfilled') {
+            alert(`Данные продукта с id = ${form.id} успешно обновлены`);
+        } else {
+            alert(`Ошибка при обновлении продукта с id = ${form.id}`);
+        }
+        setForm(product);
+    }, [dispatch, form, product]);
 
     const onChangeTitleHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        // dispatch(ProductActions.changeData({ ...form, name: e.target.value }));
-    }, [dispatch, form]);
-
+        setForm({ ...form, name: e.target.value });
+    }, [form]);
+    const onChangeDescriptionHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+        setForm({ ...form, description: e.target.value });
+    }, [form]);
     const onChangePriceHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        // dispatch(ProductActions.changeData({ ...form, price: ~~e.target.value }));
-    }, [dispatch, form]);
+        // eslint-disable-next-line no-bitwise
+        setForm({ ...form, price: ~~e.target.value });
+    }, [form]);
 
     return (
-        <div className={classNames(classes.ProductCard, {}, [className])}>
+        <Form
+            className={classNames(classes.ProductCard, {}, [className])}
+            // onSubmit={saveChangesHandler}
+        >
             {readonly
                 ? (
                     <HStack max justify="end">
                         <Button
                             variant="warning"
                             onClick={readonlyHandler}
+                            type="button"
                         >
                             Редактировать
                         </Button>
@@ -71,6 +76,7 @@ export const ProductCard = memo((props: ProductProps) => {
                     <HStack max justify="end">
                         <Button
                             variant="success"
+                            type="button"
                             onClick={saveChangesHandler}
                         >
                             Сохранить
@@ -78,6 +84,7 @@ export const ProductCard = memo((props: ProductProps) => {
                         <Button
                             variant="danger"
                             onClick={cancelChangesHandler}
+                            type="button"
                         >
                             Отставить
                         </Button>
@@ -91,35 +98,38 @@ export const ProductCard = memo((props: ProductProps) => {
                 <HStack max gap="32">
                     <img
                         className={classes.image}
-                        src={product.image}
-                        alt={product.name}
+                        src={form.image}
+                        alt={form.name}
                     />
                     <VStack max>
-                        <Form.Group className="mb-3">
-                            <Form.Control
-                                className={classes.productTitle}
-                                plaintext
-                                readOnly={readonly}
-                                onChange={onChangeTitleHandler}
-                                defaultValue={product.name}
-                            />
-                            <Form.Control
-                                className={classes.productTitle}
-                                plaintext
-                                readOnly={readonly}
-                                onChange={onChangePriceHandler}
-                                defaultValue={product.price}
-                                type="number"
-                            />
-                        </Form.Group>
+                        <Form.Control
+                            className={classes.productTitle}
+                            plaintext={readonly}
+                            readOnly={readonly}
+                            onChange={onChangeTitleHandler}
+                            defaultValue={form.name}
+                            value={form.name}
+                        />
+                        <Form.Control
+                            className={classes.productTitle}
+                            plaintext={readonly}
+                            readOnly={readonly}
+                            onChange={onChangePriceHandler}
+                            defaultValue={form.price}
+                            value={form.price}
+                            type="number"
+                        />
                     </VStack>
                 </HStack>
-                <p
-                    className={classes.description}
-                >
-                    {product.description}
-                </p>
+                <Form.Control
+                    className={classes.productTitle}
+                    plaintext={readonly}
+                    readOnly={readonly}
+                    onChange={onChangeDescriptionHandler}
+                    defaultValue={form.description}
+                    value={form.description}
+                />
             </VStack>
-        </div>
+        </Form>
     );
 });
