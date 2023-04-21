@@ -4,6 +4,7 @@
 	padding: 20px;
 	border: 2px solid teal;
 	background: rgba(41, 153, 173, 0.45);
+	border-radius: 20px;
 }
 
 .editBtn {
@@ -13,17 +14,16 @@
 }
 
 .productTitle {
+	font-size: 28px;
+	font-weight: bold;
 	margin: 0;
 	color: var(--primary-color);
 }
 
-.price {
+.productDescription {
+	font-size: 22px;
 	margin: 0;
 	color: var(--primary-color);
-
-	&:after {
-		content: ' P';
-	}
 }
 
 .image {

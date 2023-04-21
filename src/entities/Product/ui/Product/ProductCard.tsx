@@ -1,11 +1,10 @@
 import { classNames } from 'shared/lib/classNames/classNames';
 import {
-    ChangeEvent, FormEvent, memo, useCallback, useState,
+    ChangeEvent, memo, useCallback, useState,
 } from 'react';
 import { HStack, VStack } from 'shared/UI/Stack';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, InputGroup } from 'react-bootstrap';
 import { useAppDispatch } from 'shared/lib/hooks/useAppDispatch/useAppDispatch';
-import { Subscribers } from '@reduxjs/toolkit/dist/query/core/apiState';
 import { updateProduct } from '../../model/services/updateProduct';
 import { Product } from '../../model/types/ProductSchema';
 import classes from './ProductCard.module.scss';
@@ -110,19 +109,22 @@ export const ProductCard = memo((props: ProductProps) => {
                             defaultValue={form.name}
                             value={form.name}
                         />
-                        <Form.Control
-                            className={classes.productTitle}
-                            plaintext={readonly}
-                            readOnly={readonly}
-                            onChange={onChangePriceHandler}
-                            defaultValue={form.price}
-                            value={form.price}
-                            type="number"
-                        />
+                        <HStack max align="center">
+                            <div className={classes.productDescription}>Стоимость: </div>
+                            <Form.Control
+                                className={classes.productDescription}
+                                plaintext={readonly}
+                                readOnly={readonly}
+                                onChange={onChangePriceHandler}
+                                defaultValue={form.price}
+                                value={form.price}
+                                type="number"
+                            />
+                        </HStack>
                     </VStack>
                 </HStack>
                 <Form.Control
-                    className={classes.productTitle}
+                    className={classes.productDescription}
                     plaintext={readonly}
                     readOnly={readonly}
                     onChange={onChangeDescriptionHandler}
