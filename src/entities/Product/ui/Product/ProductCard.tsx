@@ -40,8 +40,9 @@ export const ProductCard = memo((props: ProductProps) => {
     const cancelChangesHandler = useCallback(() => {
         setReadonly(true);
         setForm(product);
+        URL.revokeObjectURL(imageUrl);
         setImageUrl('');
-    }, [product]);
+    }, [imageUrl, product]);
 
     const saveChangesHandler = useCallback(async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -94,7 +95,7 @@ export const ProductCard = memo((props: ProductProps) => {
                 <HStack max gap="32">
                     <div>
                         <label
-                            htmlFor="imageInput"
+                            htmlFor={`imageInput${product.id}`}
                             style={{
                                 pointerEvents: readonly ? 'none' : 'auto',
                                 cursor: readonly ? 'auto' : 'pointer',
@@ -111,7 +112,7 @@ export const ProductCard = memo((props: ProductProps) => {
                         <input
                             readOnly={readonly}
                             name="image"
-                            id="imageInput"
+                            id={`imageInput${product.id}`}
                             type="file"
                             accept="image/*"
                             onChange={handleImageChange}
