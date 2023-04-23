@@ -1,5 +1,6 @@
 import { classNames } from 'shared/lib/classNames/classNames';
 import { CSSProperties, memo } from 'react';
+import { AppLink } from '../../AppLink';
 import classes from './Text.module.scss';
 
 export enum TextTheme {
@@ -35,6 +36,7 @@ interface TextProps {
     theme?: TextTheme;
     align?: TextAlign;
     size?: TextSize;
+    href?: string;
 }
 
 export const Text = memo((props: TextProps) => {
@@ -46,6 +48,7 @@ export const Text = memo((props: TextProps) => {
         align = TextAlign.LEFT,
         size = TextSize.M,
         indent,
+        href,
     } = props;
 
     const add = [
@@ -60,6 +63,24 @@ export const Text = memo((props: TextProps) => {
     const styles: CSSProperties = {
         textIndent: indent,
     };
+
+    if (href) {
+        return (
+            <div
+                className={classNames(classes.Text, {}, add)}
+                style={styles}
+            >
+                {title && (
+                    <AppLink
+                        to={href}
+                        className={classes.title}
+                    >
+                        {title}
+                    </AppLink>
+                )}
+            </div>
+        );
+    }
 
     return (
         <div

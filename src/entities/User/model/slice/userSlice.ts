@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { USER_ACCESS_TOKEN, USER_REFRESH_TOKEN } from 'shared/const';
+import { productAdapter } from 'features/ProductsList';
 import { logout } from '../service/logout';
 import { checkAuth } from '../service/checkAuth';
 import { User, UserSchema } from '../types/user';
@@ -30,7 +31,6 @@ export const userSlice = createSlice({
             // выход
             localStorage.removeItem(USER_ACCESS_TOKEN);
             localStorage.removeItem(USER_REFRESH_TOKEN);
-            logout(USER_REFRESH_TOKEN);
             state.authData = undefined;
         },
     },

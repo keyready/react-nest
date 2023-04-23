@@ -4,6 +4,7 @@ import { LoginModal } from 'features/AuthByUsername';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     getUserAuthData, isUserAdmin, isUserManager, userActions,
+    logout,
 } from 'entities/User';
 import { Text, TextTheme } from 'shared/UI/Text/ui/Text';
 import { RoutePath } from 'shared/config/routeConfig/routeConfig';
@@ -11,6 +12,8 @@ import { Avatar } from 'shared/UI/Avatar/Avatar';
 import { Dropdown } from 'shared/UI/Dropdown';
 import { HStack } from 'shared/UI/Stack';
 import { Button } from 'react-bootstrap';
+import { ProductActions } from 'entities/Product';
+import { ProductsListActions } from 'features/ProductsList';
 import classes from './Navbar.module.scss';
 
 export interface NavbarProps {
@@ -31,8 +34,13 @@ export const Navbar = memo(({ className }: NavbarProps) => {
         setIsModalVisible(true);
     }, []);
     const onLogout = useCallback(() => {
+        if (!userData?.refresh_token) {
+            return;
+        }
         dispatch(userActions.logout());
-    }, [dispatch]);
+        dispatch(ProductsListActions.logout());
+        dispatch(logout(userData?.refresh_token));
+    }, [dispatch, userData?.refresh_token]);
 
     const isAdminPanelAvailable = isAdmin || isManager;
 
@@ -43,7 +51,8 @@ export const Navbar = memo(({ className }: NavbarProps) => {
                     <Text
                         className={classes.appName}
                         theme={TextTheme.INVERTED}
-                        title="Keyready App"
+                        title="Главная страница"
+                        href="/"
                     />
                 </HStack>
 

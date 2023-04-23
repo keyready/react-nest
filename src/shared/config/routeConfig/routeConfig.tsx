@@ -1,6 +1,6 @@
 import { RouteProps } from 'react-router-dom';
-import { MainPage } from 'pages/mainPage';
-import { AboutPage } from 'pages/aboutPage';
+import { MainPage } from 'pages/MainPage';
+import { AboutPage } from 'pages/AboutPage';
 import { NotFound } from 'pages/NotFound';
 import { UserRoles } from 'entities/User';
 import { AdminPanelPage } from 'pages/AdminPanelPage';

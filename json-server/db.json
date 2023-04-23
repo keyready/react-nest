@@ -15,13 +15,6 @@
       "image": "https://i.pravatar.cc/123"
     },
     {
-      "_id": "5678iudfhsdghri",
-      "name": "Продукт 3",
-      "description": "Товар 3 - это удобный и практичный продукт, который поможет вам решить множество задач. Он имеет компактный размер и легко помещается в любой карман. Товар 2 - это идеальное решение для тех, кто ищет надежный и удобный продукт.",
-      "price": 3233,
-      "image": "https://i.pravatar.cc/234"
-    },
-    {
       "_id": "5wert67wert543hri",
       "name": "Продукт 5",
       "description": "Товар 5 - это удобный и практичный продукт, который поможет вам решить множество задач. Он имеет компактный размер и легко помещается в любой карман. Товар 2 - это идеальное решение для тех, кто ищет надежный и удобный продукт.",
@@ -39,8 +32,8 @@
         "USER",
         "ADMIN"
       ],
-      "access_token": "qduytl0f1v85uk39qntgn6",
-      "refresh_token": "b9vhfhat1wnhckyz03dmns"
+      "access_token": "b0xh14oxmmnveoew4py3y",
+      "refresh_token": "71jabsxeh53thfk1zq908"
     },
     {
       "_id": "jdfgnkjn43436",
@@ -50,8 +43,8 @@
       "roles": [
         "USER"
       ],
-      "access_token": "234",
-      "refresh_token": "fdsg"
+      "access_token": "",
+      "refresh_token": ""
     }
   ]
 }

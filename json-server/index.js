@@ -11,24 +11,61 @@ const router = jsonServer.router(path.resolve(__dirname, 'db.json'));
 server.use(jsonServer.defaults({}));
 server.use(jsonServer.bodyParser);
 
+// Нужно для небольшой задержки, чтобы запрос проходил не мгновенно, имитация реального апи
+server.use(async (req, res, next) => {
+    await new Promise((res) => {
+        setTimeout(res, 1000);
+    });
+    next();
+});
+
 // Эндпоинт для логина
 server.post('/login', (req, res) => {
     try {
         const { login, password } = req.body;
         const { db } = router;
 
-        const userFromBd = db.get('users').find(
+        const user = db.get('users').find(
             { username: login, password },
         ).value();
 
-        if (userFromBd) {
-            return res.json(userFromBd);
+        if (!user) {
+            return res.status(403).json({ message: 'User not found' });
         }
 
-        return res.status(403).json({ message: 'User not found' });
+        const newAccessToken = generateAccessToken();
+        const newRefreshToken = generateRefreshToken();
+
+        user.access_token = newAccessToken;
+        user.refresh_token = newRefreshToken;
+
+        db.get('users')
+            .find({ id: user._id })
+            .assign({
+                access_token: newAccessToken,
+                refresh_token: newRefreshToken,
+            })
+            .write();
+
+        return res.status(200).json(user);
     } catch (e) {
         return res.status(500).json({ message: e.message });
     }
+});
+
+server.post('/logout', (req, res) => {
+    const { refresh_token } = req.body;
+    const { db } = router;
+
+    db.get('users')
+        .find({ refresh_token })
+        .assign({
+            access_token: '',
+            refresh_token: '',
+        })
+        .write();
+
+    return res.status(200).json({ message: 'Successful logout' });
 });
 
 // проверяем, авторизован ли пользователь
@@ -73,7 +110,7 @@ server.post('/update_product/:id', (req, res) => {
     const { name, description, price } = req.body;
     const { id } = req.params;
 
-    const product = db.get('products').find({ id: Number(id) }).value();
+    const product = db.get('products').find({ _id: id }).value();
 
     const updatedProduct = {
         ...product,
@@ -81,7 +118,7 @@ server.post('/update_product/:id', (req, res) => {
         description: description || product.description,
         price: price || product.price,
     };
-    db.get('products').find({ id: Number(id) }).assign(updatedProduct).write();
+    db.get('products').find({ _id: id }).assign(updatedProduct).write();
 
     const products = db.get('products').value();
     return res.json(products);
@@ -116,7 +153,6 @@ server.post('/register', (req, res) => {
 server.post('/refresh', (req, res) => {
     try {
         const { refresh_token } = req.body;
-        console.log(refresh_token);
         const { db } = router;
 
         const user = db

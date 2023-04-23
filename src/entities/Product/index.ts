@@ -1,4 +1,5 @@
 export { ProductCard } from './ui/Product/ProductCard';
+export { ProductCardSkeleton } from './ui/Product/ProductCardSkeleton';
 export type { Product, ProductSchema } from './model/types/ProductSchema';
 export { ProductActions, ProductReducer } from './model/slices/ProductSlice';
 export { createProduct } from './model/services/createProduct';

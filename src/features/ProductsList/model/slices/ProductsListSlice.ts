@@ -1,26 +1,29 @@
 import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { StateSchema } from 'app/providers/StoreProvider';
 import { deleteProduct, Product, updateProduct } from 'entities/Product';
+import { ProductsListSchema } from '../types/ProductsListSchema';
 import { fetchProducts } from '../services/fetchProducts';
-import { MainPageSchema } from '../types/MainPage';
 
-const productAdapter = createEntityAdapter<Product>({
+export const productAdapter = createEntityAdapter<Product>({
     selectId: (product) => product._id,
 });
 
 export const getProducts = productAdapter.getSelectors<StateSchema>(
-    (state) => state.mainPage || productAdapter.getInitialState(),
+    (state) => state.productsList || productAdapter.getInitialState(),
 );
 
-const MainPageSlice = createSlice({
-    name: 'articlePageSlice',
-    initialState: productAdapter.getInitialState<MainPageSchema>({
+const ProductsList = createSlice({
+    name: 'productListSlice',
+    initialState: productAdapter.getInitialState<ProductsListSchema>({
         isLoading: false,
         error: undefined,
         ids: [],
         entities: {},
     }),
     reducers: {
+        logout: (state) => {
+            productAdapter.removeAll(state);
+        },
     },
     extraReducers: ((builder) => {
         builder
@@ -30,7 +33,7 @@ const MainPageSlice = createSlice({
             })
             .addCase(fetchProducts.fulfilled, (
                 state,
-                action,
+                action: PayloadAction<Product[]>,
             ) => {
                 state.isLoading = false;
                 productAdapter.setAll(state, action.payload);
@@ -69,6 +72,6 @@ const MainPageSlice = createSlice({
 });
 
 export const {
-    reducer: MainPageReducers,
-    actions: MainPageActions,
-} = MainPageSlice;
+    reducer: ProductsListReducers,
+    actions: ProductsListActions,
+} = ProductsList;

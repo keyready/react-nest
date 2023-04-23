@@ -3,6 +3,7 @@ export { getUserAuthData } from './model/selectors/getUserAuthData/getUserAuthDa
 export { getUserInited, getUserAuthorized } from './model/selectors/getUserInited/getUserInited';
 export { isUserAdmin, isUserManager, getUserRoles } from './model/selectors/getUserRoles';
 export { registerUser } from './model/service/registerUser';
+export { logout } from './model/service/logout';
 
 export type {
     User,
