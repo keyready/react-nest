@@ -2,26 +2,19 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'app/providers/StoreProvider';
 import { Product } from '../types/ProductSchema';
 
-interface UpdateProductProps {
-    form?: FormData;
-    _id?: string
-}
-
-export const updateProduct = createAsyncThunk<
+export const deleteProduct = createAsyncThunk<
     Product[],
-    UpdateProductProps,
+    string,
     ThunkConfig<string>
 >(
-    'products/updateProduct',
-    async (props, thunkApi) => {
+    'products/deleteProduct',
+    async (id, thunkApi) => {
         const { extra, rejectWithValue } = thunkApi;
-
-        const { form, _id } = props;
 
         try {
             const response = await extra.api.post<Product[]>(
-                `/update_product/${_id}`,
-                form,
+                '/delete_product',
+                { _id: id },
             );
 
             if (!response.data) {
@@ -31,7 +24,7 @@ export const updateProduct = createAsyncThunk<
             return response.data;
         } catch (e) {
             console.log(e);
-            return rejectWithValue('error');
+            return rejectWithValue('error deleting product');
         }
     },
 );

@@ -5,6 +5,7 @@ import {
 import { HStack, VStack } from 'shared/UI/Stack';
 import { Form } from 'react-bootstrap';
 import { useAppDispatch } from 'shared/lib/hooks/useAppDispatch/useAppDispatch';
+import { deleteProduct } from '../../model/services/deleteProduct';
 import { updateProduct } from '../../model/services/updateProduct';
 import { Product } from '../../model/types/ProductSchema';
 import classes from './ProductCard.module.scss';
@@ -49,7 +50,7 @@ export const ProductCard = memo((props: ProductProps) => {
 
         const formData = new FormData(e.currentTarget);
 
-        const result = await dispatch(updateProduct({ form: formData, id: form._id }));
+        const result = await dispatch(updateProduct({ form: formData, _id: form._id }));
         setReadonly(true);
 
         if (result.meta.requestStatus === 'fulfilled') {
@@ -76,6 +77,10 @@ export const ProductCard = memo((props: ProductProps) => {
         setForm({ ...form, price: ~~e.target.value });
     }, [form]);
 
+    const deleteProductHandler = useCallback(() => {
+        dispatch(deleteProduct(product._id));
+    }, [dispatch, product._id]);
+
     return (
         <Form
             className={classNames(classes.ProductCard, {}, [className])}
@@ -85,6 +90,7 @@ export const ProductCard = memo((props: ProductProps) => {
             <ProductCardHeader
                 readonlyHandler={readonlyHandler}
                 cancelChangesHandler={cancelChangesHandler}
+                deleteProductHandler={deleteProductHandler}
                 readonly={readonly}
             />
             <VStack

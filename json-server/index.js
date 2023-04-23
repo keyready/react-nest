@@ -52,6 +52,22 @@ server.use((req, res, next) => {
     next();
 });
 
+server.post('/delete_product', (req, res) => {
+    const { db } = router;
+    const { _id } = req.body;
+
+    const products = db.get('products');
+    const product = products.find({ _id }).value();
+
+    if (!product) {
+        return res.status(404).json({ error: 'Product not found' });
+    }
+
+    products.remove({ _id }).write();
+
+    return res.status(200).json(products);
+});
+
 server.post('/update_product/:id', (req, res) => {
     const { db } = router;
     const { name, description, price } = req.body;
@@ -68,7 +84,7 @@ server.post('/update_product/:id', (req, res) => {
     db.get('products').find({ id: Number(id) }).assign(updatedProduct).write();
 
     const products = db.get('products').value();
-    res.json(products);
+    return res.json(products);
 });
 
 server.post('/register', (req, res) => {
