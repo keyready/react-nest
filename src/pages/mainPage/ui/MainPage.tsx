@@ -155,7 +155,7 @@ const MainPage = () => {
                     {products && !isLoading
                         ? products.map((product) => (
                             <ProductCard
-                                key={product.id}
+                                key={product._id}
                                 product={product}
                             />
                         ))

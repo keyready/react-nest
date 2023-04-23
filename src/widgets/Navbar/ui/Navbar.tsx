@@ -36,7 +36,7 @@ export const Navbar = memo(({ className }: NavbarProps) => {
 
     const isAdminPanelAvailable = isAdmin || isManager;
 
-    if (userData?.id) {
+    if (userData?._id) {
         return (
             <HStack justify="between" className={classNames(classes.Navbar, {}, [className])}>
                 <HStack justify="start" gap="8">

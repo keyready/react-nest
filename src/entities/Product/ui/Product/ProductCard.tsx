@@ -1,6 +1,6 @@
 import { classNames } from 'shared/lib/classNames/classNames';
 import {
-    ChangeEvent, FormEvent, memo, useCallback, useEffect, useRef, useState,
+    ChangeEvent, FormEvent, memo, useCallback, useRef, useState,
 } from 'react';
 import { HStack, VStack } from 'shared/UI/Stack';
 import { Form } from 'react-bootstrap';
@@ -49,13 +49,13 @@ export const ProductCard = memo((props: ProductProps) => {
 
         const formData = new FormData(e.currentTarget);
 
-        const result = await dispatch(updateProduct({ form: formData, id: form.id }));
+        const result = await dispatch(updateProduct({ form: formData, id: form._id }));
         setReadonly(true);
 
         if (result.meta.requestStatus === 'fulfilled') {
             //
         } else {
-            alert(`Ошибка при обновлении продукта с id = ${product.id}`);
+            alert(`Ошибка при обновлении продукта с id = ${product._id}`);
         }
         setForm(product);
     }, [dispatch, form, product]);
@@ -95,7 +95,7 @@ export const ProductCard = memo((props: ProductProps) => {
                 <HStack max gap="32">
                     <div>
                         <label
-                            htmlFor={`imageInput${product.id}`}
+                            htmlFor={`imageInput${product._id}`}
                             style={{
                                 pointerEvents: readonly ? 'none' : 'auto',
                                 cursor: readonly ? 'auto' : 'pointer',
@@ -112,7 +112,7 @@ export const ProductCard = memo((props: ProductProps) => {
                         <input
                             readOnly={readonly}
                             name="image"
-                            id={`imageInput${product.id}`}
+                            id={`imageInput${product._id}`}
                             type="file"
                             accept="image/*"
                             onChange={handleImageChange}

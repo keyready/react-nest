@@ -100,6 +100,7 @@ server.post('/register', (req, res) => {
 server.post('/refresh', (req, res) => {
     try {
         const { refresh_token } = req.body;
+        console.log(refresh_token);
         const { db } = router;
 
         const user = db
@@ -118,7 +119,7 @@ server.post('/refresh', (req, res) => {
         user.refresh_token = newRefreshToken;
 
         db.get('users')
-            .find({ id: user.id })
+            .find({ id: user._id })
             .assign({
                 access_token: newAccessToken,
                 refresh_token: newRefreshToken,

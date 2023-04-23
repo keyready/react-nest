@@ -4,7 +4,7 @@ import { Product } from '../types/ProductSchema';
 
 interface UpdateProductProps {
     form?: FormData;
-    id?: number
+    id?: string
 }
 
 export const updateProduct = createAsyncThunk<

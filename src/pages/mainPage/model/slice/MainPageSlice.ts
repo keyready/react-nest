@@ -5,7 +5,7 @@ import { fetchProducts } from '../services/fetchProducts';
 import { MainPageSchema } from '../types/MainPage';
 
 const productAdapter = createEntityAdapter<Product>({
-    selectId: (product) => product.id,
+    selectId: (product) => product._id,
 });
 
 export const getProducts = productAdapter.getSelectors<StateSchema>(

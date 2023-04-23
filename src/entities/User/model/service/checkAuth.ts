@@ -24,11 +24,11 @@ export const checkAuth = createAsyncThunk<
             }
             localStorage.setItem(
                 USER_REFRESH_TOKEN,
-                JSON.stringify(response.data.refresh_token),
+                response.data.refresh_token,
             );
             localStorage.setItem(
                 USER_ACCESS_TOKEN,
-                JSON.stringify(response.data.access_token),
+                response.data.access_token,
             );
             dispatch(userActions.setAuthData(response.data));
 
