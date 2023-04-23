@@ -5,6 +5,8 @@ import {
 import { HStack, VStack } from 'shared/UI/Stack';
 import { Form } from 'react-bootstrap';
 import { useAppDispatch } from 'shared/lib/hooks/useAppDispatch/useAppDispatch';
+import { useSelector } from 'react-redux';
+import { isUserAdmin } from 'entities/User';
 import { deleteProduct } from '../../model/services/deleteProduct';
 import { updateProduct } from '../../model/services/updateProduct';
 import { Product } from '../../model/types/ProductSchema';
@@ -20,6 +22,7 @@ export const ProductCard = memo((props: ProductProps) => {
     const { className, product } = props;
 
     const dispatch = useAppDispatch();
+    const canEdit = useSelector(isUserAdmin);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const [imageUrl, setImageUrl] = useState('');
@@ -87,12 +90,15 @@ export const ProductCard = memo((props: ProductProps) => {
             onSubmit={saveChangesHandler}
             encType="multipart/form-data"
         >
-            <ProductCardHeader
-                readonlyHandler={readonlyHandler}
-                cancelChangesHandler={cancelChangesHandler}
-                deleteProductHandler={deleteProductHandler}
-                readonly={readonly}
-            />
+            {canEdit && (
+                <ProductCardHeader
+                    readonlyHandler={readonlyHandler}
+                    cancelChangesHandler={cancelChangesHandler}
+                    deleteProductHandler={deleteProductHandler}
+                    readonly={readonly}
+                />
+            )}
+
             <VStack
                 max
                 justify="start"
