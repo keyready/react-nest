@@ -5,7 +5,7 @@ import { Navbar } from 'widgets/Navbar';
 import { Suspense, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    getUserAuthData, getUserAuthorized, getUserInited, userActions,
+    getUserAuthorized, getUserInited, userActions,
 } from 'entities/User';
 import { checkAuth } from 'entities/User/model/service/checkAuth';
 import { USER_REFRESH_TOKEN } from 'shared/const';

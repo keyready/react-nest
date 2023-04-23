@@ -136,8 +136,14 @@ server.post('/register', (req, res) => {
         return res.status(418).json({ message: 'Нет данных' });
     }
 
+    const newAccessToken = generateAccessToken();
+    const newRefreshToken = generateRefreshToken();
+
+    const access_token = newAccessToken;
+    const refresh_token = newRefreshToken;
+
     const newUser = {
-        id, firstname, lastname, login, password,
+        id, firstname, lastname, login, password, access_token, refresh_token,
     };
 
     db.get('users')

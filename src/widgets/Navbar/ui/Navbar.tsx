@@ -12,7 +12,6 @@ import { Avatar } from 'shared/UI/Avatar/Avatar';
 import { Dropdown } from 'shared/UI/Dropdown';
 import { HStack } from 'shared/UI/Stack';
 import { Button } from 'react-bootstrap';
-import { ProductActions } from 'entities/Product';
 import { ProductsListActions } from 'features/ProductsList';
 import classes from './Navbar.module.scss';
 

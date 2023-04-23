@@ -1,7 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from 'app/providers/StoreProvider';
-import { disposables } from '@headlessui/react/dist/utils/disposables';
-import { getProducts, productAdapter } from 'features/ProductsList/model/slices/ProductsListSlice';
 
 export const logout = createAsyncThunk<
     void,
@@ -11,7 +9,7 @@ export const logout = createAsyncThunk<
     'user/logout',
     async (token, thunkApi) => {
         const {
-            extra, rejectWithValue, getState, dispatch,
+            extra, rejectWithValue,
         } = thunkApi;
 
         try {
