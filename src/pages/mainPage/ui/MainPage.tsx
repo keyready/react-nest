@@ -56,16 +56,7 @@ const MainPage = () => {
         return (
             <Page>
                 <VStack gap="32">
-                    {/* {user.login && ( */}
-                    {/*    <div> */}
-                    {/*        <h2>{`Привет, ${user.firstname}`}</h2> */}
-                    {/*        <h3>{`Ты - ${user.gender === 'male' ? 'мальчик' : 'девочка'}`}</h3> */}
-                    {/*        <h3>{`Твой номер: ${user.phone}`}</h3> */}
-                    {/*        <h3>{`Твой никнейм: ${user.login}`}</h3> */}
-                    {/*        <h3>{`Твоя Яндекс.Почта: ${user.email}`}</h3> */}
-                    {/*    </div> */}
-                    {/* )} */}
-                    <MSlider />
+                    {/* <MSlider /> */}
                     <Map />
                 </VStack>
             </Page>

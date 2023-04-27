@@ -47,23 +47,26 @@
       "refresh_token": ""
     },
     {
-      "_id": "iwli2v8ihv8viil3m8y8",
-      "firstname": "Родион",
-      "lastname": "Корчак",
-      "username": "Rodion13star",
-      "password": "mrig5qtzovn270gfqrst80i",
-      "access_token": "",
-      "refresh_token": "",
-      "image": "54535/enc-e88cda9f460745a74d18584c21fb2eda2bb02b7f1e30bb48680c92188f8a2fdd"
-    },
-    {
       "_id": "rjn6q5gf4w9fcg1hht85i",
       "firstname": "Родион",
       "lastname": "Корчак",
       "username": "Rodion13star",
       "password": "ompjwn2085edyidniuyvfr",
-      "access_token": "y0_AgAAAAAUeGLlAAnSvQAAAADh44NmU5d2krYsQrOxGeuK1OGrVXi3lx8",
-      "refresh_token": "ompjwn2085edyidniuyvfr",
+      "access_token": "",
+      "refresh_token": "",
+      "roles": [
+        "ADMIN"
+      ],
+      "image": "54535/enc-e88cda9f460745a74d18584c21fb2eda2bb02b7f1e30bb48680c92188f8a2fdd"
+    },
+    {
+      "_id": "wfrvbmdbgvsvxgzhb6x0r",
+      "firstname": "Родион",
+      "lastname": "Корчак",
+      "username": "Rodion13star",
+      "password": "hgg1se5vojfdh8qu3355s",
+      "access_token": "",
+      "refresh_token": "",
       "image": "54535/enc-e88cda9f460745a74d18584c21fb2eda2bb02b7f1e30bb48680c92188f8a2fdd"
     }
   ]

@@ -24,7 +24,7 @@ export const getYandexToken = createAsyncThunk<
         const { extra, rejectWithValue, dispatch } = thunkAPI;
 
         try {
-            const backendResponse = await extra.api.post<YandexUser>('/loginToken', {
+            const backendResponse = await extra.api.post<YandexUser>('/yandex_login', {
                 code,
             });
 

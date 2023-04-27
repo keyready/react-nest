@@ -20,7 +20,7 @@ server.use(jsonServer.bodyParser);
 //     next();
 // });
 
-server.post('/loginToken', async (req, res) => {
+server.post('/yandex_login', async (req, res) => {
     const { code } = req.body;
     if (!code) return res.status(401).json({ error: 'No code' });
 
