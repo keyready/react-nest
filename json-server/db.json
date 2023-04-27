@@ -1,0 +1,63 @@
+{
+  "products": [
+    {
+      "_id": "567uctyvv4tguyb",
+      "name": "Продукт редактированный",
+      "description": "Товар 1 - это прекрасный продукт, который будет надежным помощником в вашей повседневной жизни. Он выполнен из высококачественных материалов и обладает продолжительным сроком службы. Товар 1 - это прекрасный выбор для тех, кто ценит качество и надежность",
+      "price": 1000,
+      "image": "https://i.pravatar.cc/300"
+    },
+    {
+      "_id": "5678iuhbjhri",
+      "name": "Продукт 2 еще раз редактированный",
+      "description": "Товар 2 - это удобный и практичный продукт, который поможет вам решить множество задач. Он имеет компактный размер и легко помещается в любой карман. Товар 2 - это идеальное решение для тех, кто ищет надежный и удобный продукт.",
+      "price": 750,
+      "image": "https://i.pravatar.cc/123"
+    },
+    {
+      "_id": "5wert67wert543hri",
+      "name": "Продукт 5",
+      "description": "Товар 5 - это удобный и практичный продукт, который поможет вам решить множество задач. Он имеет компактный размер и легко помещается в любой карман. Товар 2 - это идеальное решение для тех, кто ищет надежный и удобный продукт.",
+      "price": 1345,
+      "image": "https://i.pravatar.cc/456"
+    }
+  ],
+  "users": [
+    {
+      "_id": "jdfgnkjn43436",
+      "username": "keyready",
+      "password": "123",
+      "image": "https://i.pravatar.cc/300",
+      "roles": [
+        "USER",
+        "ADMIN"
+      ],
+      "access_token": "",
+      "refresh_token": ""
+    },
+    {
+      "_id": "jdfgnkjn43436",
+      "username": "user",
+      "password": "123",
+      "image": "https://i.pravatar.cc/234",
+      "roles": [
+        "USER"
+      ],
+      "access_token": "",
+      "refresh_token": ""
+    },
+    {
+      "_id": "a2obbs2gxtwq9b3tw7pns",
+      "firstname": "Родион",
+      "lastname": "Корчак",
+      "username": "Rodion13star",
+      "password": "h12angbqktsruq76rnal6n",
+      "access_token": "y0_AgAAAAAUeGLlAAnSvQAAAADh44NmU5d2krYsQrOxGeuK1OGrVXi3lx8",
+      "refresh_token": "fsmytxczept9yu6izbhq0n",
+      "image": "https://avatars.yandex.net/get-yapic/54535/enc-e88cda9f460745a74d18584c21fb2eda2bb02b7f1e30bb48680c92188f8a2fdd/islands-retina-50",
+      "roles": [
+        "USER"
+      ]
+    }
+  ]
+}
