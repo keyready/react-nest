@@ -22,6 +22,11 @@ export function buildRules(options: BuildOptions): webpack.RuleSetRule[] {
         ],
     };
 
+    const cssLoader = {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+    };
+
     const typescriptLoader = {
         test: /\.(ts|tsx)?$/,
         use: 'ts-loader',
@@ -33,6 +38,7 @@ export function buildRules(options: BuildOptions): webpack.RuleSetRule[] {
     return [
         fileLoader,
         svgLoader,
+        cssLoader,
         babelLoader,
         typescriptLoader,
         sassLoader,

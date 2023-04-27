@@ -5,6 +5,7 @@
  */
 
 import axios from 'axios';
+import Cookies from 'js-cookie';
 import { USER_ACCESS_TOKEN } from 'shared/const';
 
 export const $api = axios.create({
@@ -14,9 +15,10 @@ export const $api = axios.create({
 
 $api.interceptors.request.use((config) => {
     if (config.headers) {
-        const token = localStorage.getItem(USER_ACCESS_TOKEN) || '';
-        console.log(token);
-        config.headers.Authorization = `Bearer ${token}`;
+        const accessToken = Cookies.get(USER_ACCESS_TOKEN);
+        if (accessToken) {
+            config.headers.Authorization = `Bearer ${accessToken}`;
+        }
     }
 
     return config;

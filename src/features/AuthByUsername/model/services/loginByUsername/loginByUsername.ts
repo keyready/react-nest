@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { User, userActions } from 'entities/User';
+import Cookies from 'js-cookie';
 import { USER_ACCESS_TOKEN, USER_REFRESH_TOKEN } from 'shared/const';
 import { ThunkConfig } from 'app/providers/StoreProvider/config/StateSchema';
 
@@ -27,14 +28,8 @@ export const loginByUsername = createAsyncThunk<
                 throw new Error();
             }
 
-            localStorage.setItem(
-                USER_REFRESH_TOKEN,
-                response.data.refresh_token,
-            );
-            localStorage.setItem(
-                USER_ACCESS_TOKEN,
-                response.data.access_token,
-            );
+            Cookies.set(USER_REFRESH_TOKEN, response.data.refresh_token || '');
+            Cookies.set(USER_ACCESS_TOKEN, response.data.access_token || '');
             dispatch(userActions.setAuthData(response.data));
 
             return response.data;

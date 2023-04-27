@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { USER_ACCESS_TOKEN, USER_REFRESH_TOKEN } from 'shared/const';
+import Cookies from 'js-cookie';
 import { checkAuth } from '../service/checkAuth';
 import { User, UserSchema } from '../types/user';
 
@@ -13,22 +14,19 @@ export const userSlice = createSlice({
     initialState,
     reducers: {
         setAuthData: (state, action: PayloadAction<User>) => {
-            // при авторизации записать данные в стейт и в локал сторадж
-            localStorage.setItem(USER_REFRESH_TOKEN, action.payload.refresh_token);
+            // при авторизации записать данные в стейт и в куки
+            Cookies.set(USER_REFRESH_TOKEN, action.payload.refresh_token || '');
+            Cookies.set(USER_ACCESS_TOKEN, action.payload.access_token || '');
             state.authData = action.payload;
         },
         initAuthData: (state) => {
             // проверить, авторизован ли пользователь (после закрытия и открытия приложения)
-            const user = localStorage.getItem(USER_REFRESH_TOKEN);
-            if (user) {
-                state._authorized = true;
-            }
             state._inited = true;
         },
         logout: (state) => {
             // выход
-            localStorage.removeItem(USER_ACCESS_TOKEN);
-            localStorage.removeItem(USER_REFRESH_TOKEN);
+            Cookies.remove(USER_ACCESS_TOKEN);
+            Cookies.remove(USER_REFRESH_TOKEN);
             state.authData = undefined;
         },
     },

@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 const fs = require('fs');
+const axios = require('axios');
 const jsonServer = require('json-server');
 const path = require('path');
 const { generateAccessToken, generateRefreshToken } = require('./tokens');
@@ -12,11 +13,83 @@ server.use(jsonServer.defaults({}));
 server.use(jsonServer.bodyParser);
 
 // Нужно для небольшой задержки, чтобы запрос проходил не мгновенно
-server.use(async (req, res, next) => {
-    await new Promise((res) => {
-        setTimeout(res, 200);
+// server.use(async (req, res, next) => {
+//     await new Promise((res) => {
+//         setTimeout(res, 200);
+//     });
+//     next();
+// });
+
+server.post('/loginToken', async (req, res) => {
+    const { code } = req.body;
+    if (!code) return res.status(401).json({ error: 'No code' });
+
+    const tokens = await axios.post(
+        'https://oauth.yandex.ru/token',
+        `grant_type=authorization_code&code=${code}&client_id=c1688919452843349161a0207d2ac149&client_secret=1a8671129b2d4886a43517e15ff53d25`,
+        {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        },
+    );
+
+    if (!tokens.data) return res.status(401).json({ error: 'No tokens got' });
+
+    const result = await axios.get('https://login.yandex.ru/info', {
+        headers: {
+            Authorization: `OAuth ${tokens.data.access_token}`,
+            'Content-Type': 'application/json',
+        },
     });
-    next();
+
+    if (!result) return res.status(403).json({ error: 'No auth data in response' });
+
+    // регистрируем, если пользователь новый
+    const { db } = router;
+    const user = db.get('users').find({ login: result.data.login }).value();
+    const newRefreshToken = generateRefreshToken();
+
+    if (!user) {
+        const newUser = {
+            _id: generateAccessToken(),
+            firstname: result.data.real_name.split(' ')[0],
+            lastname: result.data.real_name.split(' ')[1],
+            username: result.data.login,
+            password: newRefreshToken,
+            access_token: tokens.data.access_token,
+            refresh_token: newRefreshToken,
+            image: result.data.default_avatar_id,
+        };
+
+        db.get('users')
+            .push(newUser)
+            .write();
+    } else {
+        const newUser = {
+            ...user,
+            access_token: tokens.data.access_token,
+            refresh_token: newRefreshToken,
+        };
+
+        db.get('users')
+            .find({ login: result.data.login })
+            .assign(newUser)
+            .write();
+    }
+
+    const authorizedUser = {
+        firstname: result.data.real_name,
+        login: result.data.login,
+        gender: result.data.sex,
+        email: result.data.default_email,
+        phone: result.data.default_phone.number,
+        avatar: result.data.default_avatar_id,
+        id: result.data.id,
+        access_token: tokens.data.access_token,
+        refresh_token: newRefreshToken,
+    };
+    return res.status(200).json(authorizedUser);
 });
 
 // Эндпоинт для логина
@@ -57,7 +130,7 @@ server.post('/logout', (req, res) => {
     const { refresh_token } = req.body;
     const { db } = router;
 
-    db.get('users')
+    const user = db.get('users')
         .find({ refresh_token })
         .assign({
             access_token: '',
@@ -65,28 +138,67 @@ server.post('/logout', (req, res) => {
         })
         .write();
 
+    if (!user) return res.status(403).json({ message: 'Logout error' });
+
     return res.status(200).json({ message: 'Successful logout' });
 });
 
+server.post('/refresh', (req, res) => {
+    try {
+        const { refresh_token } = req.body;
+        const { db } = router;
+
+        const user = db
+            .get('users')
+            .find({ refresh_token })
+            .value();
+
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid refresh token' });
+        }
+
+        const newRefreshToken = generateRefreshToken();
+
+        user.refresh_token = newRefreshToken;
+
+        db.get('users')
+            .find({ id: user._id })
+            .assign({
+                refresh_token: newRefreshToken,
+            })
+            .write();
+
+        return res.status(200).json(user);
+    } catch (e) {
+        return res.status(500).json({ message: e.message });
+    }
+});
+
 // проверяем, авторизован ли пользователь
-// eslint-disable-next-line consistent-return
 server.use((req, res, next) => {
     const { db } = router;
+    const cookies = req.headers.cookie.split(' ');
 
-    const token = db
-        .get('users')
-        .find({ access_token: req.headers.authorization.split(' ')[1] })
-        .value();
+    let access_token = cookies.find((str) => str.includes('access_token')).split('=')[1];
 
-    if (!token) {
-        return res.status(401).json({ message: 'Not auth' });
+    if (access_token.includes(';')) {
+        access_token = access_token.slice(0, -1);
     }
 
-    if (req.headers.authorization !== `Bearer ${token.access_token}`) {
+    const user = db
+        .get('users')
+        .find({ access_token })
+        .value();
+
+    if (!user) {
+        return res.status(444).json({ message: 'Not auth' });
+    }
+
+    if (req.headers.authorization !== `Bearer ${user.access_token}`) {
         return res.status(403).json({ message: 'AUTH ERROR' });
     }
 
-    next();
+    return next();
 });
 
 server.post('/delete_product', (req, res) => {
@@ -151,44 +263,8 @@ server.post('/register', (req, res) => {
         .write();
 
     const users = db.get('users').value();
-    console.log(users);
 
     return res.json({ message: 'Зарегистрировался' });
-});
-
-server.post('/refresh', (req, res) => {
-    try {
-        const { refresh_token } = req.body;
-        const { db } = router;
-
-        const user = db
-            .get('users')
-            .find({ refresh_token })
-            .value();
-
-        if (!user) {
-            return res.status(401).json({ message: 'Invalid refresh token' });
-        }
-
-        const newAccessToken = generateAccessToken();
-        const newRefreshToken = generateRefreshToken();
-
-        user.access_token = newAccessToken;
-        user.refresh_token = newRefreshToken;
-
-        db.get('users')
-            .find({ id: user._id })
-            .assign({
-                access_token: newAccessToken,
-                refresh_token: newRefreshToken,
-            })
-            .write();
-
-        return res.status(200).json(user);
-    } catch (e) {
-        console.log(e);
-        return res.status(500).json({ message: e.message });
-    }
 });
 
 server.post('/create_product', (req, res) => {

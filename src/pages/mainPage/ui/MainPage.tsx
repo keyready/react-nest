@@ -6,6 +6,7 @@ import {
     ReducersList,
 } from 'shared/lib/DynamicModuleLoader/DynamicModuleLoader';
 import { useSelector } from 'react-redux';
+
 import {
     fetchProducts,
     getProducts,
@@ -13,19 +14,40 @@ import {
     ProductsList,
     ProductsListReducers,
 } from 'features/ProductsList';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Map } from 'widgets/Map';
+import { VStack } from 'shared/UI/Stack';
+import { MSlider } from 'shared/UI/Slider';
+import { getYandexToken } from 'features/AuthByUsername';
+import { useNavigate } from 'react-router';
 
 const reducers: ReducersList = {
     productsList: ProductsListReducers,
 };
 
+interface IUser {
+    firstname?: string;
+    login?: string;
+    gender?: string;
+    email?: string;
+    phone?: string;
+}
+
 const MainPage = () => {
     const dispatch = useAppDispatch();
     const userData = useSelector(getUserAuthData);
+    const nav = useNavigate();
 
     useEffect(() => {
         if (userData) dispatch(fetchProducts());
-    }, [dispatch, userData]);
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+
+        if (code && !userData) {
+            dispatch(getYandexToken(code));
+            nav('/');
+        }
+    }, [dispatch, nav, userData]);
 
     const products = useSelector(getProducts.selectAll);
     const isLoading = useSelector(getProductsListIsLoading);
@@ -33,8 +55,19 @@ const MainPage = () => {
     if (!userData) {
         return (
             <Page>
-                <h1>Список всех продуктов</h1>
-                <h4>для начала авторизуйтесь</h4>
+                <VStack gap="32">
+                    {/* {user.login && ( */}
+                    {/*    <div> */}
+                    {/*        <h2>{`Привет, ${user.firstname}`}</h2> */}
+                    {/*        <h3>{`Ты - ${user.gender === 'male' ? 'мальчик' : 'девочка'}`}</h3> */}
+                    {/*        <h3>{`Твой номер: ${user.phone}`}</h3> */}
+                    {/*        <h3>{`Твой никнейм: ${user.login}`}</h3> */}
+                    {/*        <h3>{`Твоя Яндекс.Почта: ${user.email}`}</h3> */}
+                    {/*    </div> */}
+                    {/* )} */}
+                    <MSlider />
+                    <Map />
+                </VStack>
             </Page>
         );
     }

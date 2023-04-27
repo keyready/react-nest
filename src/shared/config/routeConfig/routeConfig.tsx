@@ -18,6 +18,7 @@ export enum AppRoutes {
     // last
     FORBIDDEN = 'forbidden',
     NOT_FOUND = 'not_found',
+    PROFILE = 'profile'
 }
 
 export const RoutePath: Record<AppRoutes, string> = {
@@ -25,6 +26,7 @@ export const RoutePath: Record<AppRoutes, string> = {
     [AppRoutes.MAIN]: '/',
     [AppRoutes.ABOUT]: '/about',
     [AppRoutes.ADMIN_PANEL]: '/admin',
+    [AppRoutes.PROFILE]: '/profile',
 
     // last
     [AppRoutes.FORBIDDEN]: '/forbidden',
@@ -38,6 +40,11 @@ export const routerConfig: Record<AppRoutes, AppRoutesProps> = {
     },
     [AppRoutes.ABOUT]: {
         path: RoutePath.about,
+        authOnly: true,
+        element: <AboutPage />,
+    },
+    [AppRoutes.PROFILE]: {
+        path: RoutePath.profile,
         authOnly: true,
         element: <AboutPage />,
     },

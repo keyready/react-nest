@@ -3,6 +3,7 @@
  */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { getYandexToken } from '../services/loginByYandexApi/getYandexToken';
 import { LoginSchema } from '../types/loginSchema';
 import { loginByUsername } from '../services/loginByUsername/loginByUsername';
 
@@ -33,6 +34,18 @@ export const loginSlice = createSlice({
                 state.isLoading = false;
             })
             .addCase(loginByUsername.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            })
+
+            .addCase(getYandexToken.pending, (state) => {
+                state.error = undefined;
+                state.isLoading = true;
+            })
+            .addCase(getYandexToken.fulfilled, (state) => {
+                state.isLoading = false;
+            })
+            .addCase(getYandexToken.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload;
             });

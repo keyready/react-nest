@@ -9,22 +9,22 @@ import {
 } from 'entities/User';
 import { checkAuth } from 'entities/User/model/service/checkAuth';
 import { USER_REFRESH_TOKEN } from 'shared/const';
+import Cookies from 'js-cookie';
 
 export const App = () => {
     const { theme } = useTheme();
     const dispatch = useDispatch();
     const inited = useSelector(getUserInited);
-    const authorized = useSelector(getUserAuthorized);
 
     // проверить, был ли авторизован пользователь перед закрытием вкладки
     useEffect(() => {
         dispatch(userActions.initAuthData());
 
-        const refreshToken = localStorage.getItem(USER_REFRESH_TOKEN) || '';
-        if (authorized && refreshToken) {
+        const refreshToken = Cookies.get(USER_REFRESH_TOKEN);
+        if (refreshToken) {
             dispatch(checkAuth(refreshToken));
         }
-    }, [dispatch, authorized]);
+    }, [dispatch]);
 
     return (
         <div

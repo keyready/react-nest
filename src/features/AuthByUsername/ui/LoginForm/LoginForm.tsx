@@ -1,12 +1,15 @@
 import { classNames } from 'shared/lib/classNames/classNames';
 import { Alert, Button, Form } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
+import proxy from 'http-proxy-middleware';
 import { ChangeEvent, memo, useCallback } from 'react';
 import {
     DynamicModuleLoader,
     ReducersList,
 } from 'shared/lib/DynamicModuleLoader/DynamicModuleLoader';
 import { useAppDispatch } from 'shared/lib/hooks/useAppDispatch/useAppDispatch';
+import { VStack } from 'shared/UI/Stack';
+import { useNavigate } from 'react-router';
 import { getLoginUsername } from '../../model/selectors/getLoginUsername/getLoginUsername';
 import { getLoginPassword } from '../../model/selectors/getLoginPassword/getLoginPassword';
 import { getLoginError } from '../../model/selectors/getLoginError/getLoginError';
@@ -47,6 +50,8 @@ const LoginForm = memo((props: LoginFormProps) => {
     }, [dispatch]);
     const onLoginClick = useCallback(async () => {
         const result = await dispatch(loginByUsername({ username, password }));
+        window.location.reload();
+
         if (result.meta.requestStatus === 'fulfilled') {
             onSuccess?.();
         }
@@ -81,15 +86,30 @@ const LoginForm = memo((props: LoginFormProps) => {
                     onChange={onPasswordChange}
                     type="password"
                 />
-                <Button
-                    variant="primary"
-                    className={classes.loginBtn}
-                    onClick={onLoginClick}
-                    disabled={isLoading}
-                    type="submit"
-                >
-                    Войти
-                </Button>
+                <VStack gap="16">
+                    <Button
+                        variant="primary"
+                        className={classes.loginBtn}
+                        onClick={onLoginClick}
+                        disabled={isLoading}
+                        type="submit"
+                    >
+                        Войти
+                    </Button>
+                    <Button
+                        variant="warning"
+                        className={classes.loginBtn}
+                        disabled={isLoading}
+                        type="button"
+                    >
+                        <a
+                            style={{ textDecoration: 'none', color: 'inherit' }}
+                            href="https://oauth.yandex.ru/authorize?response_type=code&client_id=c1688919452843349161a0207d2ac149"
+                        >
+                            Войти с Яндекс.ID
+                        </a>
+                    </Button>
+                </VStack>
             </form>
         </DynamicModuleLoader>
     );
