@@ -58,7 +58,7 @@ export const Navbar = memo(({ className }: NavbarProps) => {
                 <Dropdown
                     direction="bottom left"
                     className={classes.link}
-                    trigger={<Avatar src={`https://avatars.yandex.net/get-yapic/${userData.image}/islands-retina-50`} size={40} />}
+                    trigger={<Avatar src={userData.image} size={40} />}
                     items={[
                         ...(isAdminPanelAvailable
                             ? [{

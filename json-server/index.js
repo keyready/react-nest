@@ -47,7 +47,7 @@ server.post('/yandex_login', async (req, res) => {
 
     // регистрируем, если пользователь новый
     const { db } = router;
-    const user = db.get('users').find({ login: result.data.login }).value();
+    const user = db.get('users').find({ username: result.data.login }).value();
     const newRefreshToken = generateRefreshToken();
 
     if (!user) {
@@ -59,7 +59,10 @@ server.post('/yandex_login', async (req, res) => {
             password: newRefreshToken,
             access_token: tokens.data.access_token,
             refresh_token: newRefreshToken,
-            image: result.data.default_avatar_id,
+            image: `https://avatars.yandex.net/get-yapic/${result.data.default_avatar_id}/islands-retina-50`,
+            roles: [
+                'USER',
+            ],
         };
 
         db.get('users')
@@ -73,7 +76,7 @@ server.post('/yandex_login', async (req, res) => {
         };
 
         db.get('users')
-            .find({ login: result.data.login })
+            .find({ username: result.data.login })
             .assign(newUser)
             .write();
     }
@@ -84,7 +87,7 @@ server.post('/yandex_login', async (req, res) => {
         gender: result.data.sex,
         email: result.data.default_email,
         phone: result.data.default_phone.number,
-        avatar: result.data.default_avatar_id,
+        avatar: `https://avatars.yandex.net/get-yapic/${result.data.default_avatar_id}/islands-retina-50`,
         id: result.data.id,
         access_token: tokens.data.access_token,
         refresh_token: newRefreshToken,
